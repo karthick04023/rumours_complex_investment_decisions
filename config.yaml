@@ -1,0 +1,559 @@
+﻿# =====================================================================================
+# MASTER INPUT SPECIFICATION: Complete Parameter and Data Structure Dictionary
+# Source: "Information-Nonintensive Models of Rumour Impacts on Complex Investment Decisions"
+# Authors: Bočková, Doubravský, Volná, Dohnal
+# =====================================================================================
+
+empirical_data:
+  rrm_system:
+    source: 'Equation (11): RRM differential system, adapted from Chen et al. (2021)'
+    description: 'Rumour propagation model with 5 state variables and 6 parameters'
+    state_variables:
+      X: {name: 'Ignorants', symbol: 'X', data_type: 'float64', domain: '[0, N]', units: 'population_count', interpretation: 'Population unaware of rumour', initial_condition_range: '[0.7*N, 0.9*N]', constraint: 'non_negative', role_in_dynamics: 'decreasing_over_time'}
+      Y: {name: 'Spreaders', symbol: 'Y', data_type: 'float64', domain: '[0, N]', units: 'population_count', interpretation: 'Population actively spreading rumour', initial_condition_range: '[0.01*N, 0.1*N]', constraint: 'non_negative', role_in_dynamics: 'core_transmission_agent'}
+      W: {name: 'Skeptics', symbol: 'W', data_type: 'float64', domain: '[0, N]', units: 'population_count', interpretation: 'Population skeptical of rumour', initial_condition_range: '[0.05*N, 0.2*N]', constraint: 'non_negative', role_in_dynamics: 'rumour_resistance'}
+      Z1: {name: 'Promoters', symbol: 'Z₁', data_type: 'float64', domain: '[0, N]', units: 'population_count', interpretation: 'Population supporting negative rumour', initial_condition_range: '[0.0*N, 0.05*N]', constraint: 'non_negative', role_in_dynamics: 'rumour_amplification'}
+      Z2: {name: 'Suppressors', symbol: 'Z₂', data_type: 'float64', domain: '[0, N]', units: 'population_count', interpretation: 'Population opposing negative rumour', initial_condition_range: '[0.0*N, 0.05*N]', constraint: 'non_negative', role_in_dynamics: 'rumour_suppression'}
+    model_parameters:
+      alpha: {symbol: 'α', name: 'Contact_Rate', data_type: 'float64', domain: 'positive_real', typical_range: '[0.1, 2.0]', units: 'per_time_unit', interpretation: 'Rate of contact between ignorants and spreaders', estimation_method: 'calibration_required', sensitivity_level: 'high', elimination_rule: 'positive_constant_elimination'}
+      varphi: {symbol: 'φ', name: 'Conversion_Probability', data_type: 'float64', domain: '[0, 1]', typical_range: '[0.3, 0.8]', units: 'probability', interpretation: 'Probability ignorant becomes spreader upon contact', estimation_method: 'empirical_estimation', sensitivity_level: 'medium', elimination_rule: 'coefficient_preservation'}
+      delta: {symbol: 'δ', name: 'Stifling_Rate', data_type: 'float64', domain: 'positive_real', typical_range: '[0.05, 0.5]', units: 'per_time_unit', interpretation: 'Rate spreaders become stiflers through interaction', estimation_method: 'calibration_required', sensitivity_level: 'medium', elimination_rule: 'positive_constant_elimination'}
+      lambda: {symbol: 'λ', name: 'Suppression_Rate', data_type: 'float64', domain: 'positive_real', typical_range: '[0.01, 0.3]', units: 'per_time_unit', interpretation: 'Rate of rumour suppression effectiveness', estimation_method: 'calibration_required', sensitivity_level: 'low', elimination_rule: 'positive_constant_elimination'}
+      theta: {symbol: 'θ', name: 'Promoter_Probability', data_type: 'float64', domain: '[0, 1]', typical_range: '[0.2, 0.6]', units: 'probability', interpretation: 'Probability skeptic becomes promoter', estimation_method: 'empirical_estimation', sensitivity_level: 'low', elimination_rule: 'coefficient_preservation'}
+      eta: {symbol: 'η', name: 'Skeptic_Decay_Rate', data_type: 'float64', domain: 'positive_real', typical_range: '[0.1, 1.0]', units: 'per_time_unit', interpretation: 'Rate skeptics exit skeptical state', estimation_method: 'calibration_required', sensitivity_level: 'medium', elimination_rule: 'positive_constant_elimination'}
+    population_constraint:
+      total_population_symbol: 'N'
+      conservation_equation: 'X + Y + W + Z1 + Z2 = N'
+      conservation_property: 'total_population_constant_over_time'
+      normalization_option: 'unit_population_N_equals_1'
+    qualitative_translation:
+      source: 'Equation (11): Translated trend-based RRM system'
+      translation_rules_applied: ['constant_elimination', 'qualitative_arithmetic']
+      resulting_equations:
+        - 'DX + XY = 0'
+        - 'DY + YY + YZ_1 + YZ_2 = XY'
+        - 'DW + XY + W = XY'
+        - 'DZ_1 = YY + YZ_1 + W'
+        - 'DZ_2 + W = W + YZ_2'
+      expected_scenario_count: 211
+  transition_rules:
+    source: 'Table 2: Transition rules for a positively valued variable'
+    description: 'Complete set of 9 transition rules for temporal evolution'
+    applicability: 'positive_valued_variables_only'
+    temporal_direction: 'forward_time_evolution'
+    rules:
+      - {rule_number: 1, from_state: '(+,+,+)', primary_to_state: '(+,+,0)', alternative_1: null, alternative_2: null, transition_type: 'deterministic', interpretation: 'Growth deceleration from peak acceleration', physical_meaning: 'Peak growth rate achieved'}
+      - {rule_number: 2, from_state: '(+,+,0)', primary_to_state: '(+,+,+)', alternative_1: '(+,+,-)', alternative_2: null, transition_type: 'binary_branch', interpretation: 'Linear growth exit: acceleration or deceleration', physical_meaning: 'Growth rate inflection point'}
+      - {rule_number: 3, from_state: '(+,+,-)', primary_to_state: '(+,+,0)', alternative_1: '(+,0,-)', alternative_2: '(+,0,0)', transition_type: 'triple_branch', interpretation: 'Decelerating growth stabilization options', physical_meaning: 'Growth rate adjustment mechanisms'}
+      - {rule_number: 4, from_state: '(+,0,+)', primary_to_state: '(+,+,+)', alternative_1: null, alternative_2: null, transition_type: 'deterministic', interpretation: 'Accelerating from constant level', physical_meaning: 'Growth initiation from equilibrium'}
+      - {rule_number: 5, from_state: '(+,0,0)', primary_to_state: '(+,+,+)', alternative_1: '(+,-,-)', alternative_2: null, transition_type: 'binary_branch', interpretation: 'Equilibrium exit: growth or decline', physical_meaning: 'System destabilization from steady state'}
+      - {rule_number: 6, from_state: '(+,0,-)', primary_to_state: '(+,-,-)', alternative_1: null, alternative_2: null, transition_type: 'deterministic', interpretation: 'Transition to accelerating decline', physical_meaning: 'Downward momentum establishment'}
+      - {rule_number: 7, from_state: '(+,-,+)', primary_to_state: '(+,-,0)', alternative_1: '(+,0,+)', alternative_2: '(+,0,0)', transition_type: 'triple_branch', interpretation: 'Decline deceleration and recovery options', physical_meaning: 'Recovery potential from declining state'}
+      - {rule_number: 8, from_state: '(+,-,0)', primary_to_state: '(+,-,+)', alternative_1: '(+,-,-)', alternative_2: null, transition_type: 'binary_branch', interpretation: 'Linear decline exit options', physical_meaning: 'Trend change opportunity from steady decline'}
+      - {rule_number: 9, from_state: '(+,-,-)', primary_to_state: '(+,-,0)', alternative_1: null, alternative_2: null, transition_type: 'deterministic', interpretation: 'Deceleration from accelerating decline', physical_meaning: 'Approach to minimum or stabilization'}
+    rule_constraints:
+      smoothness_requirement: 'continuous_differentiable_transitions'
+      value_preservation: 'positive_component_always_maintained'
+      coverage_completeness: 'all_positive_valued_triplets_covered'
+      consistency_requirement: 'no_contradictory_transition_paths'
+  expert_knowledge:
+    source: 'Multiple sections: Semi-subjective expert knowledge integration'
+    description: 'Formalized expert heuristics and domain knowledge'
+    knowledge_types: ['common_sense_heuristics', 'domain_expertise', 'integration_constraints']
+    heuristics:
+      - {heuristic_id: 'H1', source: 'Section 1: Common-sense reasoning example', natural_language: 'No tree can grow to Heaven', formal_translation: 'Quantitatively Unknown Upper Limit Exists', mathematical_formulation: 'upper_bound_constraints_on_growth', application_domain: 'all_growth_variables', confidence_level: 0.95, validation_method: 'long_standing_tradition'}
+      - {heuristic_id: 'H2', source: 'Section 2: Investment decision factors', natural_language: 'Personal financial needs positively influence investment decision making', formal_translation: 'SUP(FinancialNeeds, InvestmentDecision)', mathematical_formulation: 'positive_correlation_constraint', application_domain: 'behavioral_finance_context', confidence_level: 0.80, validation_method: 'empirical_observation'}
+      - {heuristic_id: 'H3', source: 'Section 2: Firm characteristics impact', natural_language: 'Firm image positively influences investment decision making', formal_translation: 'SUP(FirmImage, InvestmentDecision)', mathematical_formulation: 'positive_correlation_constraint', application_domain: 'corporate_finance_context', confidence_level: 0.85, validation_method: 'empirical_evidence'}
+      - {heuristic_id: 'H4', source: 'Section 2: Information quality effects', natural_language: 'Neutral information positively influences investment decision making', formal_translation: 'SUP(NeutralInfo, InvestmentDecision)', mathematical_formulation: 'positive_correlation_constraint', application_domain: 'information_processing_context', confidence_level: 0.75, validation_method: 'expert_judgment'}
+    integration_constraints:
+      source: 'Table 7: Additional pairwise trend relations included in the IM'
+      constraint_count: 3
+      constraints:
+        - {constraint_id: 'IC1', mathematical_form: 'σ_{+-}(Z_2, REP)', constraint_type: 'qualitative_shape_constraint', variables_involved: ['Z2', 'REP'], shape_interpretation: 'positive_first_derivative_negative_second_derivative', economic_meaning: 'Suppressors initially increase then decrease syndicate activity', confidence_level: 0.75, integration_role: 'cross_model_linking'}
+        - {constraint_id: 'IC2', mathematical_form: 'σ_{--}(Z_1, UND)', constraint_type: 'qualitative_shape_constraint', variables_involved: ['Z1', 'UND'], shape_interpretation: 'negative_first_derivative_negative_second_derivative', economic_meaning: 'Promoters consistently accelerate underpricing reduction', confidence_level: 0.80, integration_role: 'cross_model_linking'}
+        - {constraint_id: 'IC3', mathematical_form: 'RED(W, REP)', constraint_type: 'simple_qualitative_relation', variables_involved: ['W', 'REP'], effect_direction: 'reducing_effect', economic_meaning: 'Skeptics reduce syndicate activity levels', confidence_level: 0.70, integration_role: 'cross_model_linking'}
+
+computational_configuration:
+  csp_solver:
+    source: 'References [20], [21]: Dohnal & Doubravsky (2015, 2016) - CSP methodology'
+    description: 'Constraint Satisfaction Problem solver for scenario generation'
+    algorithm_specifications:
+      primary_algorithm: 'backtracking_search'
+      constraint_propagation: true
+      variable_ordering_heuristic: 'most_constrained_first'
+      value_ordering_heuristic: 'least_constraining_value'
+      consistency_algorithm: 'arc_consistency_ac3'
+    search_space_management:
+      maximum_search_depth: null
+      search_timeout_seconds: 3600
+      memory_limit_mb: 8192
+      backtrack_limit: null
+    solution_enumeration:
+      find_all_solutions: true
+      solution_limit: null
+      duplicate_elimination: true
+      solution_validation: true
+    constraint_handling:
+      constraint_checking_method: 'forward_checking'
+      constraint_satisfaction_threshold: 1.0
+      inconsistency_detection: true
+      constraint_violation_reporting: true
+    variable_domain_specification:
+      domain_type: 'finite_discrete'
+      triplet_structure: '(Value, FirstDerivative, SecondDerivative)'
+      value_component_domain: ['+']
+      derivative_component_domain: ['+', '0', '-']
+      total_combinations_per_variable: 9
+    performance_optimization:
+      constraint_ordering: 'most_constraining_first'
+      variable_preprocessing: true
+      domain_reduction_techniques: true
+      symmetry_breaking: false
+  inconsistency_removal:
+    source: 'Section 3: Heuristic algorithm for correlation matrix inconsistency removal'
+    description: 'Iterative removal of weakest correlations until consistent solutions exist'
+    algorithm_parameters:
+      removal_strategy: 'minimum_absolute_value_first'
+      convergence_criterion: 'non_steady_state_solution_exists'
+      iteration_limit: 45
+      tie_breaking_rule: 'lexicographic_variable_order'
+    matrix_integrity_constraints:
+      symmetry_preservation: true
+      diagonal_preservation: true
+      minimum_correlations_retained: 1
+      zero_correlation_handling: 'skip_removal'
+    convergence_validation:
+      steady_state_detection_method: 'scenario_count_analysis'
+      solution_existence_verification: true
+      constraint_consistency_checking: true
+      backup_strategy: null
+    expert_integration_phase:
+      manual_refinement_enabled: true
+      expert_override_capability: true
+      final_constraint_target_count: 14
+      validation_against_domain_knowledge: true
+  qualitative_reasoning:
+    source: 'Section 3: Trend Models - qualitative reasoning methodology'
+    description: 'Qualitative arithmetic and constraint generation system'
+    trend_quantifier_system:
+      symbol_set: ['+', '0', '-', '*']
+      interpretation_mapping:
+        '+': 'positive_increasing'
+        '0': 'zero_constant'
+        '-': 'negative_decreasing'
+        '*': 'arbitrary_any_direction'
+      derivative_interpretation:
+        '+': 'increasing_trend'
+        '0': 'constant_trend'
+        '-': 'decreasing_trend'
+    qualitative_arithmetic_rules:
+      source: 'Equation (9): Qualitative addition operations'
+      addition_table:
+        ? ['(+)', '(+)']
+        : '(+)'
+        ? ['(+)', '(-)']
+        : ['(+)', '(0)', '(-)']
+        ? ['(-)', '(-)']
+        : '(-)'
+        ? ['(0)', '(+)']
+        : '(+)'
+        ? ['(0)', '(-)']
+        : '(-)'
+        ? ['(0)', '(0)']
+        : '(0)'
+      multiplication_rules: 'standard_sign_arithmetic'
+      ambiguity_resolution: 'enumerate_all_possibilities'
+    constant_elimination_system:
+      source: 'Equation (8): Constant elimination for parameter-free analysis'
+      positive_constant_rule: 'A*f(X,Y) → f(X,Y) for A > 0'
+      negative_constant_rule: 'B*g(X,Y) → -g(X,Y) for B < 0'
+      zero_constant_rule: '0*h(X,Y) → 0'
+      parameter_independence: true
+    relationship_formalization:
+      source: 'Equation (1): Supporting and reducing effects'
+      relation_types:
+        SUP: 'supporting_effect'
+        RED: 'reducing_effect'
+        NEUTRAL: 'no_effect'
+      shape_constraints:
+        source: 'Figure 1: Qualitative shapes based on first and second derivatives'
+        shape_catalog:
+          'σ++': 'supporting_accelerating'
+          'σ+0': 'supporting_linear'
+          'σ+-': 'supporting_decelerating'
+          'σ-+': 'reducing_decelerating'
+          'σ-0': 'reducing_linear'
+          'σ--': 'reducing_accelerating'
+    constraint_generation:
+      constraint_strictness: 'exact_satisfaction_required'
+      global_consistency_enforcement: true
+      local_consistency_checking: true
+      contradiction_detection: true
+  transition_system:
+    source: 'Table 2: Transition rules and Section 4 graph construction'
+    description: 'Temporal dynamics and graph construction parameters'
+    rule_application_framework:
+      applicability_scope: 'positive_valued_variables_only'
+      temporal_direction: 'forward_time_evolution_only'
+      smoothness_requirement: 'continuous_differentiable_transitions'
+      determinism_handling: 'mixed_deterministic_nondeterministic'
+    branching_management:
+      deterministic_transitions: [1, 4, 6, 9]
+      nondeterministic_transitions: [2, 3, 5, 7, 8]
+      alternative_enumeration: 'complete_exhaustive'
+      branch_exploration: 'all_valid_paths'
+    graph_construction_parameters:
+      node_definition: 'valid_scenarios_as_nodes'
+      edge_definition: 'valid_transitions_as_directed_edges'
+      self_loop_policy: 'allow_if_transition_valid'
+      cycle_policy: 'allow_cycles'
+      dead_end_identification: true
+    validation_requirements:
+      transition_rule_compliance: 'mandatory'
+      value_preservation_check: 'positive_component_maintained'
+      derivative_consistency_check: 'first_second_derivative_compatibility'
+      physical_feasibility_check: 'realistic_temporal_evolution'
+    graph_analysis_capabilities:
+      connectivity_analysis: true
+      strongly_connected_components: true
+      reachability_analysis: true
+      cycle_detection: true
+      path_enumeration: true
+  scenario_generation:
+    source: 'Multiple sections: Expected scenario counts for each model'
+    description: 'Complete scenario enumeration and validation system'
+    enumeration_strategy:
+      method: 'complete_exhaustive_search'
+      uniqueness_requirement: 'strict_duplicate_elimination'
+      ordering_scheme: 'lexicographic_consistent'
+      completeness_verification: true
+    expected_solution_counts:
+      source: 'Paper specifications for each model component'
+      cim_scenarios: 7
+      rrm_scenarios: 211
+      im_scenarios: 14
+      validation_tolerance: 0
+    scenario_structure_validation:
+      triplet_format_required: true
+      positive_value_constraint: true
+      derivative_symbol_validation: true
+      constraint_satisfaction_verification: true
+    variable_grouping_analysis:
+      source: 'Observed identical behavior patterns in results'
+      clustering_detection: true
+      identical_behavior_identification: true
+      representative_selection: true
+      group_validation: true
+    special_scenario_handling:
+      steady_state_identification: true
+      steady_state_criterion: 'all_derivatives_zero'
+      trivial_solution_detection: true
+      non_trivial_requirement: true
+
+model_integration:
+  integration_framework:
+    source: 'Equation (12): IM ≡ CIM ∪ RRM and Table 7 additional constraints'
+    description: 'Framework for combining CIM and RRM into unified integrated model'
+    integration_strategy: 'constraint_union_with_additional_relations'
+    mathematical_formulation: 'IM = CIM ∪ RRM ∪ {additional_constraints}'
+    constraint_merging:
+      cim_constraints: 14
+      rrm_constraints: 5
+      integration_constraints: 3
+      total_constraints: 22
+      conflict_resolution: 'global_consistency_enforcement'
+    variable_namespace_management:
+      cim_variables_preserved: true
+      rrm_variables_preserved: true
+      cross_model_interactions: true
+      total_variable_count: 15
+      variable_independence: false
+    solution_space_impact:
+      theoretical_maximum: 'product_of_individual_spaces'
+      actual_reduction_factor: 'significant'
+      constraint_interaction_effects: 'substantial_reduction'
+      validation_against_expected: true
+  cross_model_constraints:
+    source: 'Table 7: Additional pairwise trend relations included in the IM'
+    description: 'Specific constraints linking CIM and RRM variables'
+    constraint_specifications:
+      - {constraint_id: 'CROSS_1', mathematical_form: 'σ_{+-}(Z_2, REP)', source_equation: 'Table 7, row 1', constraint_type: 'qualitative_shape_constraint', rrm_variable: 'Z_2', cim_variable: 'REP', shape_description: 'positive_first_derivative_negative_second_derivative', economic_interpretation: 'Rumour suppressors initially boost then reduce syndicate activity', implementation_requirements: 'shape_constraint_enforcement_in_csp'}
+      - {constraint_id: 'CROSS_2', mathematical_form: 'σ_{--}(Z_1, UND)', source_equation: 'Table 7, row 2', constraint_type: 'qualitative_shape_constraint', rrm_variable: 'Z_1', cim_variable: 'UND', shape_description: 'negative_first_derivative_negative_second_derivative', economic_interpretation: 'Rumour promoters consistently accelerate underpricing reduction', implementation_requirements: 'shape_constraint_enforcement_in_csp'}
+      - {constraint_id: 'CROSS_3', mathematical_form: 'RED(W, REP)', source_equation: 'Table 7, row 3', constraint_type: 'simple_qualitative_relation', rrm_variable: 'W', cim_variable: 'REP', effect_direction: 'reducing_effect', economic_interpretation: 'Skeptics reduce syndicate activity levels', implementation_requirements: 'standard_qualitative_constraint_enforcement'}
+    constraint_validation:
+      individual_constraint_checking: true
+      constraint_interaction_analysis: true
+      global_consistency_verification: true
+      contradiction_detection: true
+  integrated_graph_construction:
+    source: 'Figure 2: Transitional graph of the integrated model'
+    description: 'Construction of complete transitional graph for 14 integrated scenarios'
+    graph_specifications:
+      node_count: 14
+      node_definition: 'integrated_scenarios_as_nodes'
+      edge_construction: 'transition_rules_applied_to_integrated_scenarios'
+      graph_type: 'directed_graph'
+    connectivity_properties:
+      source: 'Section 4.3: Analysis of scenario reachability'
+      partition_identification: true
+      expected_partitions: 2
+      cross_partition_connectivity: false
+      strongly_connected_components: true
+    reachability_analysis:
+      reachable_scenario_sets:
+        partition_1: [1, 2, 3, 4, 5]
+        partition_2: [6, 7, 8, 9, 10, 11, 12, 13, 14]
+      isolation_verification: true
+      path_enumeration: true
+      cycle_identification: true
+    visualization_parameters:
+      layout_algorithm: 'hierarchical_time_based'
+      node_labeling: 'scenario_numbers'
+      edge_styling: 'directed_arrows'
+      partition_highlighting: true
+
+analysis_framework:
+  decision_analysis:
+    source: 'Section 4.3: Multi-criteria analysis of REP, ROA, UND'
+    description: 'Investment decision support through scenario analysis'
+    target_variables:
+      primary_variables: ['REP', 'ROA', 'UND']
+      optimization_direction: 'maximization'
+      optimal_target_triplet: '(+,+,+)'
+      simultaneous_achievement: false
+    compromise_analysis:
+      trade_off_requirement: true
+      pareto_frontier_identification: true
+      preference_weighting: 'equal_importance_assumed'
+      scenario_ranking_method: 'dominance_analysis'
+    temporal_constraints:
+      reachability_analysis: true
+      path_dependency: true
+      initial_condition_impact: true
+      dynamic_optimization: true
+    investment_strategy_implications:
+      aggressive_growth_scenarios: [1, 2, 3, 4, 5]
+      conservative_growth_scenarios: [6, 7, 8, 9, 10, 11, 12, 13, 14]
+      strategy_switching_feasibility: false
+      strategy_selection_criticality: true
+  scenario_analysis:
+    source: 'Tables 5, 8 and associated analysis'
+    description: 'Comprehensive analysis of generated scenarios'
+    scenario_categorization:
+      by_model_component:
+        cim_only_scenarios: 7
+        rrm_only_scenarios: 211
+        integrated_scenarios: 14
+      by_variable_behavior:
+        cim_identical_group_1: ['REP', 'AGE', 'TA', 'MAR', 'LIS', 'QUA', 'BOO', 'PRI']
+        cim_identical_group_2: ['UND', 'ROA']
+        rrm_individual_behaviors: ['X', 'Y', 'W', 'Z_1', 'Z_2']
+      by_optimization_potential:
+        high_growth_potential: [1, 2, 3, 4, 5]
+        moderate_growth_potential: [6, 7, 8, 9, 10, 11, 12, 13, 14]
+    statistical_analysis:
+      scenario_distribution_analysis: true
+      variable_correlation_in_scenarios: true
+      clustering_validation: true
+      outlier_identification: true
+    comparative_analysis:
+      inter_model_comparison: true
+      scenario_similarity_metrics: true
+      behavioral_pattern_identification: true
+      representative_scenario_selection: true
+  validation_framework:
+    source: 'Scientific reproducibility and methodological rigor requirements'
+    description: 'Comprehensive validation of all results and processes'
+    constraint_satisfaction_validation:
+      individual_constraint_checking: true
+      global_consistency_verification: true
+      contradiction_detection: true
+      constraint_violation_reporting: true
+    numerical_precision_validation:
+      floating_point_tolerance: 1.0e-12
+      constraint_satisfaction_threshold: 0.0
+      scenario_uniqueness_tolerance: 1.0e-15
+      convergence_criteria_validation: true
+    solution_completeness_validation:
+      expected_count_verification: true
+      exhaustive_enumeration_confirmation: true
+      missing_scenario_detection: true
+      duplicate_scenario_detection: true
+    methodological_consistency_validation:
+      step_by_step_verification: true
+      intermediate_result_validation: true
+      parameter_sensitivity_analysis: false
+      robustness_testing: false
+    reproducibility_validation:
+      deterministic_execution_verification: true
+      parameter_documentation_completeness: true
+      algorithmic_step_traceability: true
+      result_independence_from_implementation: true
+
+output_configuration:
+  table_formatting:
+    source: 'Tables 5, 8: Scenario presentation format'
+    description: 'Standardized format for scenario table generation'
+    scenario_table_format:
+      row_definition: 'scenarios_as_rows'
+      column_definition: 'variables_as_columns'
+      cell_content: 'triplet_representation'
+      triplet_format: '(Value,FirstDerivative,SecondDerivative)'
+      symbol_representation: 'mathematical_notation'
+    variable_presentation:
+      complete_enumeration: 'for_small_sets'
+      representative_selection: 'for_large_sets'
+      grouping_indication: true
+      ordering_scheme: 'logical_grouping'
+    formatting_specifications:
+      alignment: 'center_justified'
+      scenario_numbering: 'sequential_integer'
+      header_formatting: 'variable_abbreviations'
+      precision_display: 'exact_symbolic_representation'
+  graph_visualization:
+    source: 'Figure 2: Transitional graph based on the scenario set'
+    description: 'Network visualization of transitional relationships'
+    visualization_specifications:
+      graph_type: 'directed_network_diagram'
+      node_representation: 'numbered_circles'
+      edge_representation: 'directed_arrows'
+      layout_algorithm: 'force_directed_with_hierarchy'
+    styling_parameters:
+      node_size: 'uniform_sizing'
+      node_labeling: 'scenario_numbers'
+      edge_thickness: 'uniform'
+      color_scheme: 'monochrome_professional'
+    partition_visualization:
+      partition_highlighting: true
+      color_coding: 'partition_based'
+      isolation_indication: true
+      connectivity_emphasis: true
+  summary_reporting:
+    source: 'Throughout paper: Model characteristics and statistics'
+    description: 'Comprehensive summary of model characteristics and results'
+    model_statistics:
+      variable_counts: {cim_variables: 10, rrm_variables: 5, total_variables: 15}
+      constraint_counts: {cim_constraints: 14, rrm_constraints: 5, integration_constraints: 3, total_constraints: 22}
+      scenario_counts: {cim_scenarios: 7, rrm_scenarios: 211, integrated_scenarios: 14}
+    complexity_metrics:
+      theoretical_search_space: 'exponential_in_variables'
+      actual_solution_space: 'significantly_reduced'
+      constraint_reduction_factor: 'substantial'
+      computational_complexity: 'tractable_with_csp_methods'
+    behavioral_analysis_summary:
+      variable_grouping_patterns: true
+      identical_behavior_identification: true
+      representative_variable_selection: true
+      cross_model_interaction_effects: true
+  documentation_requirements:
+    source: 'Scientific reproducibility and transparency requirements'
+    description: 'Complete documentation for reproducibility'
+    methodology_documentation:
+      step_by_step_procedures: 'complete_detail'
+      parameter_specifications: 'full_traceability'
+      algorithmic_details: 'implementation_level'
+      validation_procedures: 'comprehensive_coverage'
+    data_provenance:
+      source_citations: 'complete_reference_chain'
+      parameter_derivation: 'explicit_justification'
+      assumption_documentation: 'clear_statement'
+      limitation_acknowledgment: 'transparent_discussion'
+    reproducibility_package:
+      complete_input_specification: true
+      algorithmic_implementation_guidelines: true
+      validation_test_cases: true
+      expected_output_verification: true
+
+execution_control:
+  external_dependencies:
+    source: 'References to external CSP algorithms and implementations'
+    description: 'External components required for complete implementation'
+    required_external_components:
+      csp_solver_library: {requirement: 'external_implementation_needed', references: '[dohnal_doubravsky15, dohnal_doubravsky16]', functionality: 'combinatorial_scenario_generation', specifications: 'backtracking_search_with_constraint_propagation'}
+      expert_knowledge_interface: {requirement: 'manual_input_system_needed', source: 'Semi-subjective expert knowledge integration', functionality: 'expert_constraint_refinement', specifications: 'interactive_constraint_modification'}
+    implementation_alternatives:
+      csp_library_options: ['python_constraint', 'ortools', 'custom_implementation']
+      expert_interface_options: ['interactive_gui', 'configuration_file', 'api_interface']
+      validation_tool_options: ['built_in_validation', 'external_verification', 'cross_validation']
+  execution_sequence:
+    source: 'Methodological progression through Sections 2-4'
+    description: 'Mandatory sequence of operations for correct implementation'
+    phase_1_data_preparation:
+      step_1: 'load_correlation_matrix'
+      step_2: 'validate_matrix_properties'
+      step_3: 'initialize_variable_definitions'
+      step_4: 'setup_rrm_parameters'
+      validation: 'data_integrity_check'
+    phase_2_cim_construction:
+      step_1: 'apply_inconsistency_removal_algorithm'
+      step_2: 'integrate_expert_knowledge'
+      step_3: 'formulate_cim_csp'
+      step_4: 'solve_cim_csp'
+      step_5: 'validate_cim_scenarios'
+      validation: 'cim_scenario_count_verification'
+    phase_3_rrm_construction:
+      step_1: 'translate_differential_system'
+      step_2: 'apply_qualitative_arithmetic'
+      step_3: 'formulate_rrm_csp'
+      step_4: 'solve_rrm_csp'
+      step_5: 'validate_rrm_scenarios'
+      validation: 'rrm_scenario_count_verification'
+    phase_4_model_integration:
+      step_1: 'merge_constraint_sets'
+      step_2: 'add_integration_constraints'
+      step_3: 'formulate_integrated_csp'
+      step_4: 'solve_integrated_csp'
+      step_5: 'validate_integrated_scenarios'
+      validation: 'im_scenario_count_verification'
+    phase_5_analysis_and_reporting:
+      step_1: 'construct_transitional_graphs'
+      step_2: 'perform_decision_analysis'
+      step_3: 'generate_output_tables'
+      step_4: 'create_visualizations'
+      step_5: 'compile_summary_report'
+      validation: 'complete_result_verification'
+  quality_assurance:
+    source: 'Scientific methodology and reproducibility standards'
+    description: 'Comprehensive quality control throughout execution'
+    validation_checkpoints:
+      data_loading_validation: 'integrity_and_format_checking'
+      algorithm_execution_validation: 'step_by_step_verification'
+      intermediate_result_validation: 'consistency_and_completeness_checking'
+      final_result_validation: 'expected_outcome_verification'
+    error_detection_mechanisms:
+      constraint_contradiction_detection: true
+      infinite_loop_prevention: true
+      memory_overflow_protection: true
+      numerical_instability_detection: true
+    performance_monitoring:
+      execution_time_tracking: true
+      memory_usage_monitoring: true
+      convergence_rate_analysis: true
+      bottleneck_identification: true
+    audit_trail_requirements:
+      complete_parameter_logging: true
+      decision_point_documentation: true
+      intermediate_result_storage: true
+      error_and_warning_logging: true
+  reproducibility_control:
+    source: 'Scientific reproducibility and transparency standards'
+    description: 'Ensuring exact reproducibility of all results'
+    determinism_requirements:
+      algorithmic_determinism: 'mandatory'
+      parameter_determinism: 'complete_specification'
+      execution_order_determinism: 'strict_sequencing'
+      output_format_determinism: 'standardized_formatting'
+    randomness_control:
+      random_seed_management: 'not_applicable'
+      pseudo_random_elimination: 'verified'
+      non_deterministic_behavior_elimination: 'verified'
+    environment_independence:
+      platform_independence: 'strongly_recommended'
+      library_version_specification: 'exact_versions_documented'
+      hardware_independence: 'algorithm_design_requirement'
+      operating_system_independence: 'preferred'
+    verification_mechanisms:
+      cross_implementation_verification: 'recommended'
+      independent_reproduction_testing: 'required'
+      result_hash_verification: 'implemented'
+      numerical_precision_verification: 'mandatory'
